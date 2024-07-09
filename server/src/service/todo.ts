@@ -2,29 +2,60 @@ import { Todo } from "../interface/todo";
 import * as todoModel from "../model/todos";
 
 export function getAllTodos() {
-    return todoModel.getAllTodos();
+    const data = todoModel.getAllTodos();
+    if (data.length > 0) {
+        return data;
+    }
+    return { message: "No todos found currently!" };
 }
 
 export function getTodoById(id: number) {
-    return todoModel.getTodoById(id);
+    const todo = todoModel.getTodoById(id);
+    if (!todo) {
+        return { message: `Todo with id: ${id} is not found!` };
+    }
+    return todo;
 }
 
 export function addTodos(todo: Todo) {
-    todoModel.addTodos(todo);
+    console.log(todo);
+    if (todo.title && todo.description) {
+        return todoModel.addTodos(todo);
+    } else {
+        return { message: "Both title and description required!" };
+    }
 }
 
 export function updateTodoById(id: number, title: string, description: string) {
-    return todoModel.updateTodoById(id, title, description);
+    const todoIndex = todoModel.updateTodoById(id, title, description);
+    if (todoIndex != -1) {
+        return { message: "Todo updated successfully!" };
+    } else {
+        return { message: `Todo with id: ${id} not found!` };
+    }
 }
 
 export function deleteTodoById(id: number) {
-    return todoModel.deleteTodoById(id);
+    const todoIndex = todoModel.deleteTodoById(id);
+    if (todoIndex != -1) {
+        return { message: "Todo deleted successfully!" };
+    } else {
+        return { message: `Todo with id: ${id} not found!` };
+    }
 }
 
 export function isCompleted(id: number) {
-    todoModel.isCompleted(id);
+    const todoIndex = todoModel.isCompleted(id);
+    if (todoIndex != -1) {
+        return { message: `Todo with id: ${id} is completed!` };
+    }
+    return { message: `Todo with id: ${id} not found!` };
 }
 
 export function getAllCompletedTodos() {
-    return todoModel.getAllCompletedTodos();
+    const data = todoModel.getAllCompletedTodos();
+    if (data.length > 0) {
+        return data;
+    }
+    return { message: "No todos found currently!" };
 }

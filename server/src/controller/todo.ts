@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import * as todoService from "../service/todo";
-import { formatDate } from "../utils/dateFormat";
-import { todos } from "../data/todos";
-
-// for maintaing todo id
-let todoCounts = todos.length + 1;
+import { JwtPayload, verify } from "jsonwebtoken";
+import config from "../config";
 
 export function getAllTodos(req: Request, res: Response) {
     const data = todoService.getAllTodos();
@@ -13,54 +10,49 @@ export function getAllTodos(req: Request, res: Response) {
 
 export function getTodoById(req: Request, res: Response) {
     const { id } = req.params; //getting id from url
-    const todo = todoService.getTodoById(Number(id));
-    if (todo) {
-        res.json(todo);
-    } else {
-        res.json({ message: `Todo with Id: ${id} is not found!` });
-    }
+    const data = todoService.getTodoById(Number(id));
+
+    res.json(data);
 }
 
 export function addTodos(req: Request, res: Response) {
     const { body } = req;
-    // creating new todo to add
-    const newTodo = {
-        id: todoCounts,
-        ...body,
-        created_on: formatDate(new Date()),
-        updated_on: formatDate(new Date()),
-        is_completed: false,
-    };
-    todoService.addTodos(newTodo);
-    todoCounts++;
-    res.json({ message: "Todo Added Successfully" });
+
+    const { authorization } = req.headers;
+
+    const token = authorization?.split(" ")!;
+
+    let currentUser: JwtPayload;
+    try {
+        currentUser = verify(token[1], config.jwt.secret!) as JwtPayload;
+    } catch (error) {
+        return { error: "Invalid refresh token" };
+    }
+
+
+    body.user_id = currentUser?.id;
+
+    const message = todoService.addTodos(body);
+    res.json(message);
 }
 
 export function updateTodoById(req: Request, res: Response) {
     const { id } = req.params;
     const { title, description } = req.body;
-    const resp = todoService.updateTodoById(Number(id), title, description);
-    if (resp) {
-        res.json({ message: "Todo Updated Successfully" });
-    } else {
-        res.json({ message: `Todo with id: ${id} is not found!` });
-    }
+    const message = todoService.updateTodoById(Number(id), title, description);
+    res.json(message);
 }
 
 export function deleteTodoById(req: Request, res: Response) {
     const { id } = req.params;
-    const resp = todoService.deleteTodoById(Number(id));
-    if (resp) {
-        res.json({ message: "Deleted Successfully" });
-    } else {
-        res.json({ message: `Todo with id: ${id} is not found!` });
-    }
+    const message = todoService.deleteTodoById(Number(id));
+    res.json(message);
 }
 
 export function completedTodos(req: Request, res: Response) {
     const { id } = req.params;
-    todoService.isCompleted(Number(id));
-    res.json({ message: `Todo with id: ${id} is completed` });
+    const message = todoService.isCompleted(Number(id));
+    res.json(message);
 }
 
 export function getAllCompletedTodos(req: Request, res: Response) {
