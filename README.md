@@ -38,7 +38,7 @@
 ### To delete todo by id
 - http://localhost:3000/api/todos/id (DELETE request)
 ### To mark todo as completed by id
-- http://localhost:3000/api/completed/id (PUT request)
+- http://localhost:3000/api/completedTodos/id (PUT request)
 
 ### To see completed todos
-- http://localhost:3000/api/completed (GET request)
+- http://localhost:3000/api/completedTodos (GET request)
