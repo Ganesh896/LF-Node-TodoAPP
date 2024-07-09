@@ -5,7 +5,7 @@
 [Node.js](https://nodejs.org/en)
 ```sh
     git clone https://github.com/Ganesh896/LF-Node-TodoAPP
-    cd Todo
+    cd server
     npm install
 
     # Add in .env file
