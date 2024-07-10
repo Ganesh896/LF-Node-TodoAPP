@@ -1,8 +1,8 @@
 import { Todo } from "../interface/todo";
 import * as todoModel from "../model/todos";
 
-export function getAllTodos() {
-    const data = todoModel.getAllTodos();
+export function getAllTodos(userId:number) {
+    const data = todoModel.getAllTodos(userId);
     if (data.length > 0) {
         return data;
     }

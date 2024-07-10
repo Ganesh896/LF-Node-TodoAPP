@@ -11,7 +11,6 @@ export async function login(req: Request, res: Response) {
     const { body } = req;
 
     const { accessToken, refreshToken } = await userService.login(body);
-
     res.json({ accessToken, refreshToken });
 }
 

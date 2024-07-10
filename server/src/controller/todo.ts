@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
 import * as todoService from "../service/todo";
-import { JwtPayload, verify } from "jsonwebtoken";
-import config from "../config";
 
 export function getAllTodos(req: Request, res: Response) {
-    const data = todoService.getAllTodos();
+    const data = todoService.getAllTodos(req.body.user_id);
     res.json(data);
 }
 
@@ -17,20 +15,6 @@ export function getTodoById(req: Request, res: Response) {
 
 export function addTodos(req: Request, res: Response) {
     const { body } = req;
-
-    const { authorization } = req.headers;
-
-    const token = authorization?.split(" ")!;
-
-    let currentUser: JwtPayload;
-    try {
-        currentUser = verify(token[1], config.jwt.secret!) as JwtPayload;
-    } catch (error) {
-        return { error: "Invalid refresh token" };
-    }
-
-
-    body.user_id = currentUser?.id;
 
     const message = todoService.addTodos(body);
     res.json(message);

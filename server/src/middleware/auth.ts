@@ -5,6 +5,8 @@ import config from "../config";
 export function auth(req: Request, res: Response, next: NextFunction) {
     const { authorization } = req.headers;
 
+    console.log(authorization);
+
     if (!authorization) {
         next(new Error("Unauthenticated"));
 
@@ -19,7 +21,10 @@ export function auth(req: Request, res: Response, next: NextFunction) {
         return;
     }
 
-    verify(token[1], config.jwt.secret!);
+    console.log(token);
+
+    const payload: any = verify(token[1], config.jwt.secret!);
+    req.body.user_id = payload.id;
 
     next();
 }

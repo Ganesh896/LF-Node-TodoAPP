@@ -6,8 +6,8 @@ import { formatDate } from "../utils/dateFormat";
 let todoCounts = todos.length + 1;
 
 // returning all todos
-export function getAllTodos() {
-    return todos;
+export function getAllTodos(userId:number) {
+    return todos.filter(({user_id}) => userId===user_id);
 }
 
 export function getTodoById(id: number) {

@@ -50,8 +50,8 @@ export async function refreshToken(oldRefreshToken: string) {
         return { error: "Invalid refresh token" };
     }
 
-    console.log(decodedToken);
-    console.log(typeof decodedToken);
+    // console.log(decodedToken);
+    // console.log(typeof decodedToken);
 
     if (typeof decodedToken === "string" || !decodedToken.email) {
         return { error: "Invalid token payload" };
