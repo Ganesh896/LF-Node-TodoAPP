@@ -5,24 +5,20 @@ import { User } from "../interface/user";
 import { formatDate } from "../utils/dateFormat";
 
 // for maintaing todo id
-let todoCounts = todos.length + 1;
+let todoCounts = todos.length;
 
 // returning all todos
 export function getAllTodos(user: User) {
-    if (user.permissions[0] === "user") {
-        return todos.filter(({ user_id }) => user.id === user_id);
-    }
-    {
-        throw new UnauthenticatedError("Permission denied");
-    }
+    return todos.filter(({ user_id }) => user.id === user_id);
 }
 
-export function getTodoById(id: string) {
-    return todos.find(({ id: todoId }) => todoId === id);
+export function getTodoById(id: string, userId: string) {
+    return todos.find(({ id: todoId, user_id }) => todoId === id && userId === user_id);
 }
 
 // addTodo
 export function addTodos(todo: Todo, user: User) {
+    todoCounts++;
     if (user.permissions[0] === "user") {
         const newTodo = {
             user_id: user.id,
@@ -31,10 +27,10 @@ export function addTodos(todo: Todo, user: User) {
             created_on: formatDate(new Date()),
             updated_on: formatDate(new Date()),
             is_completed: false,
-            id: "" + todoCounts,
+            id: todoCounts + "",
         };
         todos.push(newTodo);
-        todoCounts++;
+
         return { message: "Todo added successfully!" };
     } else {
         throw new UnauthenticatedError("Only Users can add todos");

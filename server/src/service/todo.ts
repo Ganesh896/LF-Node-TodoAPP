@@ -12,25 +12,28 @@ export function getAllTodos(user: User) {
 }
 
 export function getTodoById(id: string, userId: string) {
-    const todo = todoModel.getTodoById(id);
+    const todo = todoModel.getTodoById(id, userId);
 
     if (!todo) {
         throw new NotFoundError(`Todo with id: ${id} is not found!`);
     }
 
-    if (userId !== todo?.user_id) {
-        throw new UnauthenticatedError();
-    }
+    // if (userId !== todo?.user_id) {
+    //     throw new UnauthenticatedError();
+    // }
 
     return todo;
 }
 
 export function addTodos(todo: Todo, user: User) {
-    console.log(todo);
-    if (todo.title && todo.description) {
-        return todoModel.addTodos(todo, user);
+    if (user.permissions[0] === "user") {
+        if (todo.title && todo.description) {
+            return todoModel.addTodos(todo, user);
+        } else {
+            return { message: "Both title and description required!" };
+        }
     } else {
-        return { message: "Both title and description required!" };
+        throw new UnauthenticatedError("Only users can add todos");
     }
 }
 

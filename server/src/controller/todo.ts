@@ -33,7 +33,8 @@ export function updateTodoById(req: Request, res: Response, next: NextFunction) 
     try {
         const { id } = req.params;
         const { body } = req;
-        const todo = todoService.updateTodoById(id, req.user!.id, body.title, body.description);
+        const user = req.user!;
+        const todo = todoService.updateTodoById(id, user.id, body.title, body.description);
         successResponse(res, "Todo updated successfully", todo);
     } catch (error) {
         next(error);
@@ -43,8 +44,8 @@ export function updateTodoById(req: Request, res: Response, next: NextFunction) 
 export function deleteTodoById(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
-        const { body } = req;
-        const message = todoService.deleteTodoById(id, body.user_id);
+        const user = req.user!;
+        const message = todoService.deleteTodoById(id, user.id);
         res.json(message);
     } catch (error) {
         next(error);
@@ -54,8 +55,8 @@ export function deleteTodoById(req: Request, res: Response, next: NextFunction) 
 export function completedTodos(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
-        const { body } = req;
-        const message = todoService.isCompleted(id, body.user_id);
+        const user = req.user!;
+        const message = todoService.isCompleted(id, user.id);
         res.json(message);
     } catch (error) {
         next(error);
@@ -64,8 +65,8 @@ export function completedTodos(req: Request, res: Response, next: NextFunction) 
 
 export function getAllCompletedTodos(req: Request, res: Response, next: NextFunction) {
     try {
-        const { body } = req;
-        const data = todoService.getAllCompletedTodos(req.user!.id);
+        const user = req.user!;
+        const data = todoService.getAllCompletedTodos(user.id);
         res.json(data);
     } catch (error) {
         next(error);

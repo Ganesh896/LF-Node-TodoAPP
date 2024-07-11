@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as userService from "../service/user";
 import { successResponse } from "../utils/response";
-import { NotFoundError } from "../error/error";
 
 export async function createUser(req: Request, res: Response) {
     const { body } = req;
@@ -36,8 +35,9 @@ export function getAllUsers(req: Request, res: Response, next: NextFunction) {
 export function getUserById(req: Request, res: Response, next: NextFunction) {
     try {
         let { id } = req.params;
-        const users = userService.getUserById(id);
-        successResponse(res, "Users retrieved successfully", users);
+        const user = userService.getUserById(id);
+        console.log("controller");
+        successResponse(res, "User retrieved successfully", user);
     } catch (error) {
         next(error);
     }
