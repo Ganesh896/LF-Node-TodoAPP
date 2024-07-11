@@ -9,7 +9,7 @@
     cd server
 
     # switch branch to todo-user
-    git chekout todo-user
+    git chekout assignment3
 
     npm install
 
@@ -22,6 +22,18 @@
 ```
 
 # API routes/paths
+
+### login adim
+-   http://localhost:3000/users/login (POST request)
+
+```sh
+    {
+        "email" : "admin@gmail.com",
+        "password" : "admin123"
+    }
+```
+
+# THESE ROUTES CAN ACCESS ONLY BY ADMIN
 
 ### create user
 -   http://localhost:3000/users (POST request)
@@ -37,7 +49,22 @@
 ### get all users
 -   http://localhost:3000/users (GET request)
 
-### get all users
+### get user by Id
+-   http://localhost:3000/users/id (GET request)
+
+### update user by Id
+-   http://localhost:3000/users/id (PUT request)
+```sh
+    {
+        "name": "User1",
+        "email" : "user1@gmail.com",
+    }
+```
+
+### delete user by Id
+-   http://localhost:3000/users/id (DELETE request)
+
+### login user
 -   http://localhost:3000/users/login (POST request)
 
 ```sh
