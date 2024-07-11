@@ -1,7 +1,7 @@
 import { users } from "../data/users";
 import { User } from "../interface/user";
 
-let userCounts = users.length;
+let userCounts = 1;
 
 // create new user
 export function createUser(user: User) {
@@ -37,7 +37,6 @@ export function deleteUserById(id: string) {
     const userIndex = users.findIndex(({ id: todoId }) => todoId === id);
     if (userIndex !== -1) {
         users.splice(userIndex, 1);
-
         return true;
     }
 

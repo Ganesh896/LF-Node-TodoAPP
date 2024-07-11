@@ -9,6 +9,11 @@ export class UnauthenticatedError extends BaseError {
         super(message);
     }
 }
+export class BadRequestError extends BaseError {
+    constructor(message = "Not a valid request") {
+        super(message);
+    }
+}
 
 export class ForbiddenError extends BaseError {
     constructor(message = "Forbidden access") {

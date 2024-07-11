@@ -2,10 +2,11 @@ import { User } from "../interface/user";
 import * as userModel from "../model/user";
 import bcrypt from "bcrypt";
 import { generateAccessRefreshToken } from "./auth";
-import { JwtPayload, verify } from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
 import config from "../config";
 import { NotFoundError } from "../error/error";
 
+// login function
 export async function login(body: Pick<User, "email" | "password">) {
     const currentUser = getUserByEmail(body.email);
     if (!currentUser) {
@@ -13,7 +14,10 @@ export async function login(body: Pick<User, "email" | "password">) {
             error: "Invalid email or password",
         };
     }
+
+    // check if the provided password matches the stored hashed password
     const isValidPassword = await bcrypt.compare(body.password, currentUser.password);
+
     if (!isValidPassword) {
         return {
             error: "Invalid email or password",
@@ -21,10 +25,10 @@ export async function login(body: Pick<User, "email" | "password">) {
     }
 
     const { accessToken, refreshToken } = await generateAccessRefreshToken(currentUser);
-
     return { accessToken, refreshToken };
 }
 
+// function to refresh tokens using the old refresh token
 export async function refreshToken(oldRefreshToken: string) {
     if (!oldRefreshToken) {
         return { error: "Unauthorized request" };
@@ -38,10 +42,10 @@ export async function refreshToken(oldRefreshToken: string) {
     }
 
     const { accessToken, refreshToken } = await generateAccessRefreshToken(decodedUser);
-
     return { message: "Access token refreshed", tokens: { accessToken, refreshToken } };
 }
-//create user
+
+// create a new user and hash the password
 export async function createUser(user: User) {
     if (user.name && user.email && user.password) {
         const password = await bcrypt.hash(user.password, 10);
@@ -53,17 +57,17 @@ export async function createUser(user: User) {
         return { message: "name, email & password required" };
     }
 }
-//get all users
+
+// retrieve all users
 export function getAllUsers() {
     const data = userModel.getAllUsers();
-
     if (data.length === 0) {
         return { message: "No users found currently!" };
     }
-
     return data;
 }
-//get user by Id
+
+// retrieve a user by ID
 export function getUserById(id: string) {
     const user = userModel.getUserById(id);
     if (!user) {
@@ -71,7 +75,8 @@ export function getUserById(id: string) {
     }
     return user;
 }
-//update user by id
+
+// update a user by ID
 export function updateUserById(id: string, username: string, email: string) {
     const user = userModel.updateUserById(id, username, email);
     if (!user) {
@@ -79,7 +84,8 @@ export function updateUserById(id: string, username: string, email: string) {
     }
     return user;
 }
-//delete user by Id
+
+// delete a user by ID
 export function deleteUserById(id: string) {
     const resp = userModel.deleteUserById(id);
     if (!resp) {
@@ -88,6 +94,7 @@ export function deleteUserById(id: string) {
     return { message: "User deleted successfully!" };
 }
 
+// retrieve a user by email
 export function getUserByEmail(email: string) {
     return userModel.getUserByEmail(email);
 }

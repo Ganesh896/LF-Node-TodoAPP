@@ -9,7 +9,7 @@
     cd server
 
     # switch branch to todo-user
-    git chekout assignment3
+    git chekout assignment4
 
     npm install
 
@@ -24,6 +24,7 @@
 # API routes/paths
 
 ### login adim
+
 -   http://localhost:3000/users/login (POST request)
 
 ```sh
@@ -36,6 +37,7 @@
 # THESE ROUTES CAN ACCESS ONLY BY ADMIN
 
 ### create user
+
 -   http://localhost:3000/users (POST request)
 
 ```sh
@@ -47,13 +49,17 @@
 ```
 
 ### get all users
+
 -   http://localhost:3000/users (GET request)
 
 ### get user by Id
+
 -   http://localhost:3000/users/id (GET request)
 
 ### update user by Id
+
 -   http://localhost:3000/users/id (PUT request)
+
 ```sh
     {
         "name": "User1",
@@ -62,9 +68,11 @@
 ```
 
 ### delete user by Id
+
 -   http://localhost:3000/users/id (DELETE request)
 
 ### login user
+
 -   http://localhost:3000/users/login (POST request)
 
 ```sh
@@ -77,12 +85,15 @@
 ## To access these routes set accessToken in Authorization->Bearer Token->Token
 
 ### To fetch all todos
+
 -   http://localhost:3000/todos (GET request)
 
 ### To fetch todo by id
+
 -   http://localhost:3000/todos/id (GET request)
 
 ### To add todo
+
 -   http://localhost:3000/todos (POST request)
 
 ```sh
@@ -93,6 +104,7 @@
 ```
 
 ### To update todo
+
 -   http://localhost:3000/todos/id (PUT request)
 
 ```sh
@@ -103,10 +115,13 @@
 ```
 
 ### To delete todo by id
+
 -   http://localhost:3000/todos/id (DELETE request)
 
 ### To mark todo as completed by id
+
 -   http://localhost:3000/completed/id (PUT request)
 
 ### To see completed todos
+
 -   http://localhost:3000/completed (GET request)

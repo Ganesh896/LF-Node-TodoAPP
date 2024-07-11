@@ -5,7 +5,7 @@ import { User } from "../interface/user";
 import { formatDate } from "../utils/dateFormat";
 
 // for maintaing todo id
-let todoCounts = todos.length;
+let todoCounts = 0;
 
 // returning all todos
 export function getAllTodos(user: User) {
@@ -21,13 +21,14 @@ export function addTodos(todo: Todo, user: User) {
     todoCounts++;
     if (user.permissions[0] === "user") {
         const newTodo = {
-            user_id: user.id,
-            title: todo.title,
-            description: todo.description,
+            // title: todo.title,
+            // description: todo.description,
+            ...todo,
             created_on: formatDate(new Date()),
             updated_on: formatDate(new Date()),
             is_completed: false,
             id: todoCounts + "",
+            user_id: user.id,
         };
         todos.push(newTodo);
 
@@ -56,7 +57,6 @@ export function deleteTodoById(id: string, userId: string) {
     if (todoIndex !== -1) {
         todos.splice(todoIndex, 1);
     }
-
     return todoIndex;
 }
 
