@@ -37,7 +37,7 @@
 ### get all users
 -   http://localhost:3000/users (GET request)
 
-### get all users
+### login user
 -   http://localhost:3000/users/login (POST request)
 
 ```sh
