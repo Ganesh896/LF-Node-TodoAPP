@@ -7,6 +7,7 @@ export async function generateAccessRefreshToken(user: User) {
         id: user.id,
         name: user.name,
         email: user.email,
+        permissions: user.permissions,
     };
 
     const accessToken = await sign(payload, config.jwt.secret!, {

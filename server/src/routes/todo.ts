@@ -1,22 +1,22 @@
 import express from "express";
 import { addTodos, deleteTodoById, getAllTodos, getTodoById, updateTodoById } from "../controller/todo";
-import { auth } from "../middleware/auth";
+import { authenticate } from "../middleware/auth";
 
 const router = express();
 
 //url = http://localhost:3000/api/todos method = GET
-router.get("/", auth, getAllTodos);
+router.get("/", authenticate, getAllTodos);
 
 //url = http://localhost:3000/api/todos/1 method = GET
-router.get("/:id", auth, getTodoById);
+router.get("/:id", authenticate, getTodoById);
 
 //url = http://localhost:3000/api/todos method = POST
-router.post("/", auth, addTodos);
+router.post("/", authenticate, addTodos);
 
 //url = http://localhost:3000/api/todos/1 method = PUT
-router.put("/:id", auth, updateTodoById);
+router.put("/:id", authenticate, updateTodoById);
 
 //url = http://localhost:3000/api/todos/1 method = DELETE
-router.delete("/:id", auth, deleteTodoById);
+router.delete("/:id", authenticate, deleteTodoById);
 
 export default router;

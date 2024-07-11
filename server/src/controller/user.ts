@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import * as userService from "../service/user";
+import { successResponse } from "../utils/response";
 
 export async function createUser(req: Request, res: Response) {
     const { body } = req;
@@ -22,8 +23,44 @@ export async function refreshToken(req: Request, res: Response) {
     res.json(message);
 }
 
-export function getAllUsers(req: Request, res: Response) {
-    const users = userService.getAllUsers();
+export function getAllUsers(req: Request, res: Response, next: NextFunction) {
+    try {
+        const users = userService.getAllUsers();
+        successResponse(res, "Users retrieved successfully", users);
+    } catch (error) {
+        next(error);
+    }
+}
 
-    res.json(users);
+export function getUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { id } = req.params;
+        const users = userService.getUserById(Number(id));
+        successResponse(res, "Users retrieved successfully", users);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export function updateUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { id } = req.params;
+        const { username, email } = req.body;
+
+        const user = userService.updateUserById(Number(id), username, email);
+        successResponse(res, `Users with Id: ${id} updated successfully`, user);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export function deleteUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { id } = req.params;
+
+        const user = userService.deleteUserById(Number(id));
+        successResponse(res, `Users with Id: ${id} deleted successfully`, user);
+    } catch (error) {
+        next(error);
+    }
 }
