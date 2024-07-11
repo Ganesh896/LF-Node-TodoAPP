@@ -64,7 +64,7 @@ export function getAllUsers() {
     return data;
 }
 //get user by Id
-export function getUserById(id: number) {
+export function getUserById(id: string) {
     const user = userModel.getUserById(id);
     if (!user) {
         throw new NotFoundError(`User with Id: ${id} not found`);
@@ -72,7 +72,7 @@ export function getUserById(id: number) {
     return user;
 }
 //update user by id
-export function updateUserById(id: number, username: string, email: string) {
+export function updateUserById(id: string, username: string, email: string) {
     const user = userModel.updateUserById(id, username, email);
     if (!user) {
         throw new NotFoundError(`User with Id: ${id} not found`);
@@ -80,7 +80,7 @@ export function updateUserById(id: number, username: string, email: string) {
     return user;
 }
 //delete user by Id
-export function deleteUserById(id: number) {
+export function deleteUserById(id: string) {
     const resp = userModel.deleteUserById(id);
     if (!resp) {
         throw new NotFoundError(`User with Id: ${id} not found`);

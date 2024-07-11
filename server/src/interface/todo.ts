@@ -1,6 +1,6 @@
 export interface Todo {
-    id: number;
-    user_id: number;
+    id: string;
+    user_id: string;
     title: string;
     description: string;
     created_on: string;

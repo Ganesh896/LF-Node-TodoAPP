@@ -6,7 +6,7 @@ import logger from "../utils/logger";
 export function notFoundError(req: Request, res: Response) {
     return res.status(HttpStatusCodes.NOT_FOUND).json({
         status: "error",
-        message: "Not Found",
+        message: "Route Not Found",
     });
 }
 

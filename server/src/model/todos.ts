@@ -1,31 +1,37 @@
 import { todos, completed } from "../data/todos";
 import { UnauthenticatedError } from "../error/error";
 import { Todo } from "../interface/todo";
+import { User } from "../interface/user";
 import { formatDate } from "../utils/dateFormat";
 
 // for maintaing todo id
 let todoCounts = todos.length + 1;
 
 // returning all todos
-export function getAllTodos(userId: number) {
-    return todos.filter(({ user_id }) => userId === user_id);
+export function getAllTodos(user: User) {
+    if (user.permissions[0] === "user") {
+        return todos.filter(({ user_id }) => user.id === user_id);
+    }
+    {
+        throw new UnauthenticatedError("Permission denied");
+    }
 }
 
-export function getTodoById(id: number) {
+export function getTodoById(id: string) {
     return todos.find(({ id: todoId }) => todoId === id);
 }
 
 // addTodo
-export function addTodos(todo: Todo, role: string) {
-    if (role === "user") {
+export function addTodos(todo: Todo, user: User) {
+    if (user.permissions[0] === "user") {
         const newTodo = {
-            user_id: todo.user_id,
+            user_id: user.id,
             title: todo.title,
             description: todo.description,
             created_on: formatDate(new Date()),
             updated_on: formatDate(new Date()),
             is_completed: false,
-            id: todoCounts,
+            id: "" + todoCounts,
         };
         todos.push(newTodo);
         todoCounts++;
@@ -36,8 +42,8 @@ export function addTodos(todo: Todo, role: string) {
 }
 
 // updating title and description
-export function updateTodoById(id: number, title: string, description: string) {
-    const todo = todos.find(({ id: todoId }) => todoId === Number(id));
+export function updateTodoById(id: string, title: string, description: string) {
+    const todo = todos.find(({ id: todoId }) => todoId === id);
 
     if (todo) {
         if (title) todo.title = title;
@@ -49,8 +55,8 @@ export function updateTodoById(id: number, title: string, description: string) {
 }
 
 //deleting todo
-export function deleteTodoById(id: number, userId: number) {
-    const todoIndex = todos.findIndex(({ id: todoId, user_id }) => todoId === Number(id) && userId === user_id);
+export function deleteTodoById(id: string, userId: string) {
+    const todoIndex = todos.findIndex(({ id: todoId, user_id }) => todoId === id && userId === user_id);
     if (todoIndex !== -1) {
         todos.splice(todoIndex, 1);
     }
@@ -59,8 +65,8 @@ export function deleteTodoById(id: number, userId: number) {
 }
 
 //completed todo
-export function isCompleted(id: number, userId: number) {
-    const todoIndex = todos.findIndex(({ id: todoId, user_id }) => todoId === Number(id) && userId === user_id);
+export function isCompleted(id: string, userId: string) {
+    const todoIndex = todos.findIndex(({ id: todoId, user_id }) => todoId === id && userId === user_id);
 
     if (todoIndex != -1) {
         const todo = todos[todoIndex];
@@ -73,6 +79,6 @@ export function isCompleted(id: number, userId: number) {
 }
 
 // returning all completedTodos
-export function getAllCompletedTodos(userId: number) {
+export function getAllCompletedTodos(userId: string) {
     return completed.filter(({ user_id: id }) => userId === id);
 }

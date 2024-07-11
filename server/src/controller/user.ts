@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as userService from "../service/user";
 import { successResponse } from "../utils/response";
+import { NotFoundError } from "../error/error";
 
 export async function createUser(req: Request, res: Response) {
     const { body } = req;
@@ -34,8 +35,8 @@ export function getAllUsers(req: Request, res: Response, next: NextFunction) {
 
 export function getUserById(req: Request, res: Response, next: NextFunction) {
     try {
-        const { id } = req.params;
-        const users = userService.getUserById(Number(id));
+        let { id } = req.params;
+        const users = userService.getUserById(id);
         successResponse(res, "Users retrieved successfully", users);
     } catch (error) {
         next(error);
@@ -47,7 +48,7 @@ export function updateUserById(req: Request, res: Response, next: NextFunction) 
         const { id } = req.params;
         const { username, email } = req.body;
 
-        const user = userService.updateUserById(Number(id), username, email);
+        const user = userService.updateUserById(id, username, email);
         successResponse(res, `Users with Id: ${id} updated successfully`, user);
     } catch (error) {
         next(error);
@@ -58,7 +59,7 @@ export function deleteUserById(req: Request, res: Response, next: NextFunction) 
     try {
         const { id } = req.params;
 
-        const user = userService.deleteUserById(Number(id));
+        const user = userService.deleteUserById(id);
         successResponse(res, `Users with Id: ${id} deleted successfully`, user);
     } catch (error) {
         next(error);
