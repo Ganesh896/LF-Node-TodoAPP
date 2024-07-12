@@ -1,15 +1,5 @@
 import Joi from "joi";
 
-// schema for parameter validation
-export const todoParamsSchema = Joi.object({
-    id: Joi.string().regex(/^\d+$/).required().messages({
-        "any.required": "Id is required!",
-        "string.pattern.base": "Id must be a number",
-    }),
-}).options({
-    stripUnknown: true,
-});
-
 // schema for adding todo
 export const addTodoBodySchema = Joi.object({
     title: Joi.string().required().messages({

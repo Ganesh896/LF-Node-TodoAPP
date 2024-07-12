@@ -1,14 +1,5 @@
 import Joi from "joi";
 
-export const todoParamsSchema = Joi.object({
-    id: Joi.string().regex(/^\d+$/).required().messages({
-        "any.required": "Id is required!",
-        "string.pattern.base": "Id must be a number",
-    }),
-}).options({
-    stripUnknown: true,
-});
-
 // Schema for adding user
 export const addUserBodySchema = Joi.object({
     name: Joi.string().required().messages({
@@ -48,11 +39,24 @@ export const addUserBodySchema = Joi.object({
 });
 
 // Schema for updating an existing user
-export const updateTodoBodySchema = Joi.object({
-    title: Joi.string().optional().messages({
+export const updateUserBodySchema = Joi.object({
+    name: Joi.string().optional().messages({
         "any.required": "name is required",
     }),
-    description: Joi.string().optional().messages({
+    email: Joi.string().optional().messages({
+        "any.required": "email is required",
+    }),
+}).options({
+    stripUnknown: true,
+});
+
+// Schema for updating an existing user
+export const loginUserBodySchema = Joi.object({
+    email: Joi.string().email().required().messages({
+        "any.required": "Email is required",
+        "string.email": "Email must be a valid format",
+    }),
+    password: Joi.string().required().messages({
         "any.required": "email is required",
     }),
 }).options({
