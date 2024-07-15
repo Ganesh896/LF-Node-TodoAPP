@@ -6,6 +6,14 @@ import { verify } from "jsonwebtoken";
 import config from "../config";
 import { NotFoundError } from "../error/error";
 
+// create a new user and hash the password
+export async function createUser(user: User) {
+    const password = await bcrypt.hash(user.password, 10);
+    userModel.createUser({ ...user, password: password });
+
+    return { message: "User created successfully!" };
+}
+
 // login function
 export async function login(body: Pick<User, "email" | "password">) {
     const currentUser = getUserByEmail(body.email);
@@ -43,19 +51,6 @@ export async function refreshToken(oldRefreshToken: string) {
 
     const { accessToken, refreshToken } = await generateAccessRefreshToken(decodedUser);
     return { message: "Access token refreshed", tokens: { accessToken, refreshToken } };
-}
-
-// create a new user and hash the password
-export async function createUser(user: User) {
-    if (user.name && user.email && user.password) {
-        const password = await bcrypt.hash(user.password, 10);
-        user.password = password;
-        userModel.createUser(user);
-
-        return { message: "User created successfully!" };
-    } else {
-        return { message: "name, email & password required" };
-    }
 }
 
 // retrieve all users

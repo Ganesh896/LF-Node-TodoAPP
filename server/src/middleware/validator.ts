@@ -23,7 +23,7 @@ export function validateReqBody(schema: Schema) {
         const { error, value } = schema.validate(req.body);
 
         if (error) {
-            next(new BadRequestError(error.message));
+            return next(new BadRequestError(error.details.map((detail) => detail.message).join(", ")));
         }
 
         req.body = value;

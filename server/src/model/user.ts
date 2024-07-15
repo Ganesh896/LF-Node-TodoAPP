@@ -13,6 +13,7 @@ export function createUser(user: User) {
     };
     users.push(newUser);
 }
+
 //get all users
 export function getAllUsers() {
     return users;
