@@ -38,12 +38,19 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 }
 
 // middleware to authorize user based on permissions
-export function authorize(permission: string) {
+export function authorize(...permission: string[]) {
     return (req: Request, res: Response, next: NextFunction) => {
         const user = req.user!;
 
+        if (!user) {
+            next(new ForbiddenError("User not authenticated"));
+            return;
+        }
+
+        const hasPermission = permission.every((permission) => user.permissions.includes(permission));
+
         // check if user has the required permission
-        if (!user.permissions.includes(permission)) {
+        if (!hasPermission) {
             next(new ForbiddenError("Forbidden"));
             return;
         }

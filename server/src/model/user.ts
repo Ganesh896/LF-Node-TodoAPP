@@ -9,7 +9,8 @@ export function createUser(user: User) {
     const newUser = {
         ...user,
         id: userCounts + "",
-        permissions: ["user"],
+        role: "user",
+        permissions: ["todos.get", "todos.create", "todos.update", "todos.delete"],
     };
     users.push(newUser);
 }

@@ -6,6 +6,7 @@ export const users: User[] = [
         name: "Admin",
         email: "admin@gmail.com",
         password: "$2b$10$XdVb5H07hrX7GAlW1iAQBupyxiEGQcVfyGD.U2EQ.TIooNyCmWpwS", //admin123
-        permissions: ["admin"],
+        role: "admin",
+        permissions: ["users.get", "users.delete", "users.update", "users.create", "todos.get"],
     },
 ];

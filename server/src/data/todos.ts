@@ -46,4 +46,4 @@ export const todos: Todo[] = [
 ];
 
 // arry to store completed todo
-export const completed: Todo[] = [];
+// export const completed: Todo[] = [];

@@ -1,4 +1,4 @@
-import { todos, completed } from "../data/todos";
+import { todos } from "../data/todos";
 import { UnauthenticatedError } from "../error/error";
 import { Todo } from "../interface/todo";
 import { User } from "../interface/user";
@@ -67,7 +67,6 @@ export function isCompleted(id: string, userId: string) {
     if (todoIndex != -1) {
         const todo = todos[todoIndex];
         todo.is_completed = true;
-        completed.push(todo);
         todos.splice(todoIndex, 1);
     }
 
@@ -76,5 +75,5 @@ export function isCompleted(id: string, userId: string) {
 
 // returning all completedTodos
 export function getAllCompletedTodos(userId: string) {
-    return completed.filter(({ user_id: id }) => userId === id);
+    return todos.filter(({ user_id: id, is_completed }) => userId === id && is_completed === true);
 }
