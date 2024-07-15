@@ -1,4 +1,4 @@
-# NODE.JS Assignment2 (Todo App With Users) (API ONLY)
+# NODE.JS Assignment3 (Todo App With Users) (API ONLY)
 
 ## Steps to locally setup
 
