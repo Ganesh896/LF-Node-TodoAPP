@@ -1,5 +1,9 @@
 # NODE.JS Assignment6 (Todo App With Users) (API ONLY)
 
+## ER Diagram
+
+![logo](./server/public/todo-app-er-diagram.png)
+
 ## Steps to locally setup
 
 -   Install Node.js version 18 or above on your system, here is the link: [Node.js](https://nodejs.org/en)
