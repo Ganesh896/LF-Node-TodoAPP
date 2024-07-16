@@ -1,4 +1,4 @@
-# NODE.JS Assignment5 (Todo App With Users) (API ONLY)
+# NODE.JS Assignment6 (Todo App With Users) (API ONLY)
 
 ## Steps to locally setup
 
@@ -9,7 +9,7 @@
     cd server
 
     # switch branch to todo-user
-    git chekout assignment5
+    git chekout assignment6
 
     npm install
 
@@ -19,15 +19,4 @@
 
     # Finally run
     npm run start
-```
-
-# Run Test with
-
-```sh
-
-    # to run unit test
-    npm run test
-
-    # to run integration test
-    npm test:integration
 ```
