@@ -1,9 +1,9 @@
 import { Knex } from "knex";
 
-const TABLE_NAME = "userRoles";
+const TABLE_NAME = "user_roles";
 
 /**
- * Create table userRoles.
+ * Create table user_roles.
  *
  * @param   {Knex} knex
  * @returns {Promise}
@@ -12,9 +12,9 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable(TABLE_NAME, (table) => {
         table.bigIncrements();
 
-        table.bigint("user_id").notNullable().references("id").inTable("users");
+        table.bigint("user_id").notNullable().references("id").inTable("users").onDelete("cascade");
 
-        table.bigint("role_id").notNullable().references("id").inTable("roles");
+        table.bigint("role_id").notNullable().references("id").inTable("roles").onDelete("cascade");
 
         table.timestamp("created_at").notNullable().defaultTo(knex.raw("now()"));
 
@@ -27,7 +27,7 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 /**
- * Drop table userRoles.
+ * Drop table user_roles.
  *
  * @param   {Knex} knex
  * @returns {Promise}

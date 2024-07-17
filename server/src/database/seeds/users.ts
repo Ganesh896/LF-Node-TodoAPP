@@ -14,6 +14,7 @@ export function seed(knex: Knex): Promise<void> {
         .then(() => {
             return knex(TABLE_NAME).insert([
                 {
+                    id: 1,
                     name: "Admin",
                     email: "admin@gmail.com",
                     password: "$2b$10$XdVb5H07hrX7GAlW1iAQBupyxiEGQcVfyGD.U2EQ.TIooNyCmWpwS",

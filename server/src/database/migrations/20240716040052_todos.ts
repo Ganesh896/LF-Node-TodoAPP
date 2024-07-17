@@ -12,7 +12,7 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable(TABLE_NAME, (table) => {
         table.bigIncrements();
 
-        table.bigint("user_id").notNullable().references("id").inTable("users");
+        table.bigint("user_id").notNullable().references("id").inTable("users").onDelete("cascade");
 
         table.string("title", 100).notNullable();
 

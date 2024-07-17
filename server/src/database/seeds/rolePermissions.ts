@@ -1,9 +1,9 @@
 import { Knex } from "knex";
 
-const TABLE_NAME = "rolePermissions";
+const TABLE_NAME = "role_permissions";
 
 /**
- * Delete existing entries and seed values for table rolePermissions.
+ * Delete existing entries and seed values for table role_permissions.
  *
  * @param   {Knex} knex
  * @returns {Promise}

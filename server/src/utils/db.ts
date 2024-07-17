@@ -5,16 +5,16 @@ import camelize from "camelize";
 
 const knexConfig: Knex.Config = {
     ...baseKnexConfig,
-    // wrapIdentifier: (value, originalImpl) => {
-    //     if (value === "*") {
-    //         return originalImpl(value);
-    //     }
+    wrapIdentifier: (value, originalImpl) => {
+        if (value === "*") {
+            return originalImpl(value);
+        }
 
-    //     return originalImpl(toSnakeCase(value));
-    // },
-    // postProcessResponse: (result) => {
-    //     return camelize(result);
-    // },
+        return originalImpl(toSnakeCase(value));
+    },
+    postProcessResponse: (result) => {
+        return camelize(result);
+    },
 };
 
 export default knex(knexConfig);
