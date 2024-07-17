@@ -1,11 +1,12 @@
 import { NotFoundError, UnauthenticatedError } from "../error/error";
+import { GetQuery } from "../interface/query";
 import { Todo } from "../interface/todo";
 import { User } from "../interface/user";
 import * as todoModel from "../model/todos";
 
 // get all todos for a user
-export function getAllTodos(user: User) {
-    const data = todoModel.getAllTodos(user);
+export async function getTodos(userId: string) {
+    const data = await todoModel.TodoModel.getTodos(userId);
     if (data.length > 0) {
         return data;
     }
@@ -13,8 +14,8 @@ export function getAllTodos(user: User) {
 }
 
 // get a todo by ID
-export function getTodoById(id: string, userId: string) {
-    const todo = todoModel.getTodoById(id, userId);
+export async function getTodoById(id: string) {
+    const todo = await todoModel.TodoModel.getTodoById(id);
     if (!todo) {
         throw new NotFoundError(`Todo with id: ${id} is not found!`);
     }
@@ -22,48 +23,39 @@ export function getTodoById(id: string, userId: string) {
 }
 
 // add a new todo, only allowed for users with "user" permission
-export function addTodos(todo: Todo, user: User) {
-    if (user.permissions[0] === "user") {
-        return todoModel.addTodos(todo, user);
-    } else {
-        throw new UnauthenticatedError("Only users can add todos");
-    }
+export function addTodos(todo: Todo, userId: string) {
+    todoModel.TodoModel.addTodo(todo, userId);
+
+    return { message: "Todo added successfully!" };
 }
 
 // update a todo by ID
-export function updateTodoById(id: string, userId: string, title: string, description: string) {
-    const todo = todoModel.updateTodoById(id, title, description);
-    if (!todo) {
-        throw new NotFoundError(`Todo with id: ${id} is not found!`);
-    }
-    if (userId !== todo?.user_id) {
-        throw new UnauthenticatedError();
-    }
-    return todo;
+export function updateTodo(id: string, todo: Todo) {
+    todoModel.TodoModel.updateTodo(id, todo);
+    return { message: "Todo update successfully!" };
 }
 
 // delete a todo by ID
-export function deleteTodoById(id: string, userId: string) {
-    const todoIndex = todoModel.deleteTodoById(id, userId);
-    if (todoIndex != -1) {
-        return { message: "Todo deleted successfully!" };
-    } else {
-        throw new NotFoundError(`Todo with id: ${id} is not found!`);
+export async function deleteTodo(id: string) {
+    const deletedRows = await todoModel.TodoModel.deleteTodo(id);
+    if (deletedRows < 1) {
+        throw new NotFoundError(`Todo with Id: ${id} not found`);
     }
+    return { message: "Todo deleted successfully!" };
 }
 
 // mark a todo as completed by ID and user ID
-export function isCompleted(id: string, userId: string) {
-    const todoIndex = todoModel.isCompleted(id, userId);
-    if (todoIndex === -1) {
+export async function completeTodo(id: string) {
+    const rows = await todoModel.TodoModel.completeTodo(id);
+    if (rows < 1) {
         throw new NotFoundError(`Todo with id: ${id} is completed!`);
     }
     return { message: `Todo with id: ${id} not found!` };
 }
 
 // get all completed todos for a user by user ID
-export function getAllCompletedTodos(userId: string) {
-    const data = todoModel.getAllCompletedTodos(userId);
+export async function getAllCompletedTodos() {
+    const data = await todoModel.TodoModel.getAllCompletedTodos();
     if (data.length > 0) {
         return data;
     }

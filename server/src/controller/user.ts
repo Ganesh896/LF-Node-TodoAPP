@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import * as userService from "../service/user";
 import { successResponse } from "../utils/response";
+import { GetQuery } from "../interface/query";
 
 // controller function to create a new user.
 export async function createUser(req: Request, res: Response) {
@@ -10,11 +11,15 @@ export async function createUser(req: Request, res: Response) {
 }
 
 // controller function to handle user login.
-export async function login(req: Request, res: Response) {
-    const { body } = req;
+export async function login(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { body } = req;
 
-    const { accessToken, refreshToken } = await userService.login(body);
-    res.json({ accessToken, refreshToken });
+        const { accessToken, refreshToken } = await userService.login(body);
+        res.json({ accessToken, refreshToken });
+    } catch (error) {
+        next(error);
+    }
 }
 
 // controller function to refresh access token using refresh token.
@@ -27,9 +32,10 @@ export async function refreshToken(req: Request, res: Response) {
 }
 
 // controller function to get all users.
-export function getAllUsers(req: Request, res: Response, next: NextFunction) {
+export async function getUsers(req: Request<any, any, any, GetQuery>, res: Response, next: NextFunction) {
     try {
-        const users = userService.getAllUsers();
+        const { query } = req;
+        const users = await userService.getUsers(query);
         successResponse(res, "Users retrieved successfully", users);
     } catch (error) {
         next(error);
@@ -37,10 +43,10 @@ export function getAllUsers(req: Request, res: Response, next: NextFunction) {
 }
 
 //controller function to get a user by ID.
-export function getUserById(req: Request, res: Response, next: NextFunction) {
+export async function getUserById(req: Request, res: Response, next: NextFunction) {
     try {
         let { id } = req.params;
-        const user = userService.getUserById(id);
+        const user = await userService.getUserById(id);
         successResponse(res, "User retrieved successfully", user);
     } catch (error) {
         next(error);
@@ -48,25 +54,25 @@ export function getUserById(req: Request, res: Response, next: NextFunction) {
 }
 
 // controller function to update a user by ID.
-export function updateUserById(req: Request, res: Response, next: NextFunction) {
+export async function updateUserById(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
-        const { username, email } = req.body;
-
-        const user = userService.updateUserById(id, username, email);
-        successResponse(res, `User with Id: ${id} updated successfully`, user);
+        const { body } = req;
+        console.log(body);
+        const response = await userService.updateUserById(id, body);
+        res.json(response);
     } catch (error) {
         next(error);
     }
 }
 
 // controller function to delete a user by ID.
-export function deleteUserById(req: Request, res: Response, next: NextFunction) {
+export async function deleteUserById(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
 
-        const user = userService.deleteUserById(id);
-        successResponse(res, `User with Id: ${id} deleted successfully`, user);
+        const message = await userService.deleteUserById(id);
+        res.json(message);
     } catch (error) {
         next(error);
     }

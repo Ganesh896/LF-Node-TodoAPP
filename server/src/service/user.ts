@@ -4,32 +4,34 @@ import bcrypt from "bcrypt";
 import { generateAccessRefreshToken } from "./auth";
 import { verify } from "jsonwebtoken";
 import config from "../config";
-import { NotFoundError } from "../error/error";
+import { NotFoundError, UnauthenticatedError } from "../error/error";
+import { GetQuery } from "../interface/query";
 
 // create a new user and hash the password
 export async function createUser(user: User) {
     const password = await bcrypt.hash(user.password, 10);
-    userModel.createUser({ ...user, password: password });
+
+    userModel.UserModel.addUser({
+        ...user,
+        password: password,
+    });
 
     return { message: "User created successfully!" };
 }
 
 // login function
 export async function login(body: Pick<User, "email" | "password">) {
-    const currentUser = getUserByEmail(body.email);
+    const currentUser = await getUserByEmail(body.email);
+    console.log(currentUser);
     if (!currentUser) {
-        return {
-            error: "Invalid email or password",
-        };
+        throw new UnauthenticatedError("Invalid email or password");
     }
 
     // check if the provided password matches the stored hashed password
     const isValidPassword = await bcrypt.compare(body.password, currentUser.password);
 
     if (!isValidPassword) {
-        return {
-            error: "Invalid email or password",
-        };
+        throw new UnauthenticatedError("Invalid email or password");
     }
 
     const { accessToken, refreshToken } = await generateAccessRefreshToken(currentUser);
@@ -54,8 +56,8 @@ export async function refreshToken(oldRefreshToken: string) {
 }
 
 // retrieve all users
-export function getAllUsers() {
-    const data = userModel.getAllUsers();
+export async function getUsers(query: GetQuery) {
+    const data = await userModel.UserModel.getUsers(query);
     if (data.length === 0) {
         return { message: "No users found currently!" };
     }
@@ -63,8 +65,8 @@ export function getAllUsers() {
 }
 
 // retrieve a user by ID
-export function getUserById(id: string) {
-    const user = userModel.getUserById(id);
+export async function getUserById(id: string) {
+    const user = await userModel.UserModel.getUserById(id);
     if (!user) {
         throw new NotFoundError(`User with Id: ${id} not found`);
     }
@@ -72,18 +74,21 @@ export function getUserById(id: string) {
 }
 
 // update a user by ID
-export function updateUserById(id: string, username: string, email: string) {
-    const user = userModel.updateUserById(id, username, email);
-    if (!user) {
-        throw new NotFoundError(`User with Id: ${id} not found`);
-    }
-    return user;
+export async function updateUserById(id: string, user: User) {
+    const password = await bcrypt.hash(user.password, 10);
+
+    userModel.UserModel.updateUser(id, {
+        ...user,
+        password: password,
+    });
+
+    return { message: `User with id: ${id} updated successfully!` };
 }
 
 // delete a user by ID
-export function deleteUserById(id: string) {
-    const resp = userModel.deleteUserById(id);
-    if (!resp) {
+export async function deleteUserById(id: string) {
+    const deletedRows = await userModel.UserModel.deleteUserById(id);
+    if (deletedRows < 1) {
         throw new NotFoundError(`User with Id: ${id} not found`);
     }
     return { message: "User deleted successfully!" };
@@ -91,5 +96,5 @@ export function deleteUserById(id: string) {
 
 // retrieve a user by email
 export function getUserByEmail(email: string) {
-    return userModel.getUserByEmail(email);
+    return userModel.UserModel.getUserByEmail(email);
 }

@@ -1,5 +1,5 @@
 import express from "express";
-import { completedTodos, getAllCompletedTodos } from "../controller/todo";
+import { completeTodo, getAllCompletedTodos } from "../controller/todo";
 
 const router = express();
 
@@ -7,6 +7,6 @@ const router = express();
 router.get("/", getAllCompletedTodos);
 
 //url = http://localhost:3000/api/completed/1 method = PUT
-router.put("/:id", completedTodos);
+router.put("/:id", completeTodo);
 
 export default router;

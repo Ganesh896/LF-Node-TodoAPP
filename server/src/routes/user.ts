@@ -1,10 +1,9 @@
 import express from "express";
-import { createUser, deleteUserById, getAllUsers, getUserById, login, refreshToken, updateUserById } from "../controller/user";
+import { createUser, deleteUserById, getUsers, getUserById, login, refreshToken, updateUserById } from "../controller/user";
 import { authenticate, authorize } from "../middleware/auth";
 import { validateReqBody, validateReqParams } from "../middleware/validator";
-import { updateUserBodySchema, addUserBodySchema, loginUserBodySchema } from "../schema/user";
+import { userBodySchema, loginUserBodySchema } from "../schema/user";
 import { paramsSchema } from "../schema/common";
-import { Permissions } from "../constants/permissions";
 
 const router = express();
 
@@ -14,18 +13,18 @@ router.post("/refresh-token", refreshToken);
 // THESE ROUTES CAN ACCESS ONLY BY ADMIN
 
 //create users
-router.post("/", validateReqBody(addUserBodySchema), authenticate, authorize(Permissions.USER_CREATE), createUser);
+router.post("/", validateReqBody(userBodySchema), authenticate, authorize("users.create"), createUser);
 
 //get all users
-router.get("/", authenticate, authorize(Permissions.USER_GET), getAllUsers);
+router.get("/", authenticate, authorize("users.get"), getUsers);
 
 //get userById
-router.get("/:id", validateReqParams(paramsSchema), authenticate, authorize(Permissions.USER_GET), getUserById);
+router.get("/:id", validateReqParams(paramsSchema), authenticate, authorize("users.get"), getUserById);
 
 //update userById
-router.put("/:id", validateReqParams(paramsSchema), validateReqBody(updateUserBodySchema), authenticate, authorize(Permissions.USER_UPDATE), updateUserById);
+router.put("/:id", validateReqParams(paramsSchema), validateReqBody(userBodySchema), authenticate, authorize("users.update"), updateUserById);
 
 //delete userById
-router.delete("/:id", validateReqParams(paramsSchema), authenticate, authorize(Permissions.USER_DELETE), deleteUserById);
+router.delete("/:id", validateReqParams(paramsSchema), authenticate, authorize("users.delete"), deleteUserById);
 
 export default router;

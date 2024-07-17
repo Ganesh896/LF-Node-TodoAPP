@@ -1,4 +1,4 @@
-# NODE.JS Assignment6 (Todo App With Users) (API ONLY)
+# NODE.JS Assignment7 (Todo App With Users) (API ONLY)
 
 ## ER Diagram
 
@@ -13,7 +13,7 @@
     cd server
 
     # switch branch to todo-user
-    git chekout assignment6
+    git chekout assignment7
 
     npm install
 

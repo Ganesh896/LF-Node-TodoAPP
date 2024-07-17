@@ -1,26 +1,25 @@
 import express from "express";
-import { addTodos, deleteTodoById, getAllTodos, getTodoById, updateTodoById } from "../controller/todo";
+import { addTodos, deleteTodo, getTodos, getTodoById, updateTodo } from "../controller/todo";
 import { authenticate, authorize } from "../middleware/auth";
 import { addTodoBodySchema, updateTodoBodySchema } from "../schema/todo";
 import { validateReqBody, validateReqParams } from "../middleware/validator";
 import { paramsSchema } from "../schema/common";
-import { Permissions } from "../constants/permissions";
 
 const router = express();
 
 //url = http://localhost:3000/api/todos method = GET
-router.get("/", authenticate, authorize(Permissions.TODO_GET), getAllTodos);
+router.get("/", authenticate, authorize("todos.get"), getTodos);
 
 //url = http://localhost:3000/api/todos/1 method = GET
-router.get("/:id", authenticate, validateReqParams(paramsSchema), authorize(Permissions.TODO_GET), getTodoById);
+router.get("/:id", authenticate, validateReqParams(paramsSchema), authorize("todos.get"), getTodoById);
 
 //url = http://localhost:3000/api/todos method = POST
-router.post("/", authenticate, validateReqBody(addTodoBodySchema), authorize(Permissions.TODO_CREATE), addTodos);
+router.post("/", authenticate, validateReqBody(addTodoBodySchema), authorize("todos.create"), addTodos);
 
 //url = http://localhost:3000/api/todos/1 method = PUT
-router.put("/:id", authenticate, validateReqParams(paramsSchema), validateReqBody(updateTodoBodySchema), authorize(Permissions.TODO_UPDATE), updateTodoById);
+router.put("/:id", authenticate, validateReqParams(paramsSchema), validateReqBody(updateTodoBodySchema), authorize("todos.update"), updateTodo);
 
 //url = http://localhost:3000/api/todos/1 method = DELETE
-router.delete("/:id", authenticate, validateReqParams(paramsSchema), authorize(Permissions.TODO_DELETE), deleteTodoById);
+router.delete("/:id", authenticate, validateReqParams(paramsSchema), authorize("todos.delete"), deleteTodo);
 
 export default router;

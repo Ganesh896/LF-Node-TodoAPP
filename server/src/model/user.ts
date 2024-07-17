@@ -1,50 +1,60 @@
-import { users } from "../data/users";
+import { GetQuery } from "../interface/query";
 import { User } from "../interface/user";
+import { BaseModel } from "./base";
 
-let userCounts = 1;
+//user model
+export class UserModel extends BaseModel {
+    // create new user
+    static async addUser(user: User) {
+        const { name, email, password } = user;
+        const userToCreate = {
+            name,
+            email,
+            password,
+        };
 
-// create new user
-export function createUser(user: User) {
-    userCounts++;
-    const newUser = {
-        ...user,
-        id: userCounts + "",
-        role: "user",
-        permissions: ["todos.get", "todos.create", "todos.update", "todos.delete"],
-    };
-    users.push(newUser);
-}
+        await this.queryBuilder().insert(userToCreate).table("users");
 
-//get all users
-export function getAllUsers() {
-    return users;
-}
-//get user by Id
-export function getUserById(userId: string) {
-    const user = users.find((user) => userId === user.id);
-    return user;
-}
-//updateUser by Id
-export function updateUserById(id: string, username: string, email: string) {
-    const user = users.find(({ id: userId }) => userId === id);
-    if (user) {
-        user.name = username;
-        user.email = email;
+        const getUser = await this.queryBuilder().select("id").table("users").where({ email }).first();
+
+        await this.queryBuilder().insert({ user_id: getUser.id, role_id: 2 }).table("userRoles");
     }
 
-    return user;
-}
-//delete user by Id
-export function deleteUserById(id: string) {
-    const userIndex = users.findIndex(({ id: todoId }) => todoId === id);
-    if (userIndex !== -1) {
-        users.splice(userIndex, 1);
-        return true;
+    //update User by Id
+    static async updateUser(id: string, user: User) {
+        const userToUpdate = {
+            name: user.name,
+            email: user.email,
+            password: user.password,
+        };
+
+        await this.queryBuilder().update(userToUpdate).table("users").where({ id });
     }
 
-    return false;
-}
+    //get users
+    static async getUsers(filter: GetQuery) {
+        const { q } = filter;
 
-export function getUserByEmail(email: string) {
-    return users.find(({ email: userEmail }) => userEmail === email);
+        const query = this.queryBuilder().select("id", "name", "email").table("users");
+
+        return query;
+    }
+
+    // get user by email
+    static getUserByEmail(email: string) {
+        return this.queryBuilder().select("id", "name", "email", "password").table("users").where({ email }).first();
+    }
+
+    //get user by id
+    static async getUserById(id: string) {
+        const user = await this.queryBuilder().select("id", "name", "email", "password").table("users").where({ id }).first();
+
+        return user;
+    }
+
+    //delete user by id
+    static async deleteUserById(id: string) {
+        const query = await this.queryBuilder().table("users").where({ id }).delete();
+        return query;
+    }
 }

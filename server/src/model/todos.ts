@@ -1,79 +1,57 @@
-import { todos } from "../data/todos";
-import { UnauthenticatedError } from "../error/error";
 import { Todo } from "../interface/todo";
-import { User } from "../interface/user";
-import { formatDate } from "../utils/dateFormat";
+import { BaseModel } from "./base";
 
-// for maintaing todo id
-let todoCounts = 0;
-
-// returning all todos
-export function getAllTodos(user: User) {
-    return todos.filter(({ user_id }) => user.id === user_id);
-}
-
-export function getTodoById(id: string, userId: string) {
-    return todos.find(({ id: todoId, user_id }) => todoId === id && userId === user_id);
-}
-
-// addTodo
-export function addTodos(todo: Todo, user: User) {
-    todoCounts++;
-    if (user.permissions[0] === "user") {
-        const newTodo = {
-            // title: todo.title,
-            // description: todo.description,
-            ...todo,
-            created_on: formatDate(new Date()),
-            updated_on: formatDate(new Date()),
-            is_completed: false,
-            id: todoCounts + "",
-            user_id: user.id,
+export class TodoModel extends BaseModel {
+    //add todos
+    static async addTodo(todo: Todo, userId: string) {
+        const todoToAdd = {
+            user_id: userId,
+            title: todo.title,
+            description: todo.description,
         };
-        todos.push(newTodo);
 
-        return { message: "Todo added successfully!" };
-    } else {
-        throw new UnauthenticatedError("Only Users can add todos");
-    }
-}
-
-// updating title and description
-export function updateTodoById(id: string, title: string, description: string) {
-    const todo = todos.find(({ id: todoId }) => todoId === id);
-
-    if (todo) {
-        if (title) todo.title = title;
-        if (description) todo.description = description;
-        todo.updated_on = formatDate(new Date());
+        await this.queryBuilder().insert(todoToAdd).table("todos");
     }
 
-    return todo;
-}
+    //get todos
+    static async getTodos(user_id: string) {
+        // const { q } = filter;
 
-//deleting todo
-export function deleteTodoById(id: string, userId: string) {
-    const todoIndex = todos.findIndex(({ id: todoId, user_id }) => todoId === id && userId === user_id);
-    if (todoIndex !== -1) {
-        todos.splice(todoIndex, 1);
-    }
-    return todoIndex;
-}
+        const query = await this.queryBuilder().select("id", "title", "description").table("todos").where({ user_id });
 
-//completed todo
-export function isCompleted(id: string, userId: string) {
-    const todoIndex = todos.findIndex(({ id: todoId, user_id }) => todoId === id && userId === user_id);
-
-    if (todoIndex != -1) {
-        const todo = todos[todoIndex];
-        todo.is_completed = true;
-        todos.splice(todoIndex, 1);
+        return query;
     }
 
-    return todoIndex;
-}
+    //get todos by id
+    static async getTodoById(id: string) {
+        const todo = await this.queryBuilder().select("id", "title", "description").table("todos").where({ id }).first();
 
-// returning all completedTodos
-export function getAllCompletedTodos(userId: string) {
-    return todos.filter(({ user_id: id, is_completed }) => userId === id && is_completed === true);
+        return todo;
+    }
+
+    //update todo by Id
+    static async updateTodo(id: string, todo: Todo) {
+        const todoToUpdate = {
+            title: todo.title,
+            description: todo.description,
+        };
+
+        await this.queryBuilder().update(todoToUpdate).table("todos").where({ id });
+    }
+
+    //delete todo by id
+    static async deleteTodo(id: string) {
+        const query = await this.queryBuilder().table("todos").where({ id }).delete();
+        return query;
+    }
+
+    //complete todo
+    static completeTodo(id: string) {
+        return this.queryBuilder().table("todos").where({ id }).update({ is_completed: true });
+    }
+
+    // get all completedTodos
+    static getAllCompletedTodos() {
+        return this.queryBuilder().table("todos").where({ is_completed: true });
+    }
 }

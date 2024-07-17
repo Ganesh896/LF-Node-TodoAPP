@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 // Schema for adding user
-export const addUserBodySchema = Joi.object({
+export const userBodySchema = Joi.object({
     name: Joi.string().required().messages({
         "any.required": "Name is required",
     }),
@@ -34,18 +34,6 @@ export const addUserBodySchema = Joi.object({
 
             return value;
         }),
-}).options({
-    stripUnknown: true,
-});
-
-// Schema for updating an existing user
-export const updateUserBodySchema = Joi.object({
-    name: Joi.string().optional().messages({
-        "any.required": "name is required",
-    }),
-    email: Joi.string().optional().messages({
-        "any.required": "email is required",
-    }),
 }).options({
     stripUnknown: true,
 });

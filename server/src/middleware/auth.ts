@@ -4,6 +4,7 @@ import { verify } from "jsonwebtoken";
 import config from "../config";
 import { User } from "../interface/user";
 import { ForbiddenError, UnauthenticatedError } from "../error/error";
+import { PermissionModel } from "../helpers/checkPermissions";
 
 // middleware to authenticate user based on JWT token
 export function authenticate(req: Request, res: Response, next: NextFunction) {
@@ -11,7 +12,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 
     // check if authorization header exists
     if (!authorization) {
-        next(new UnauthenticatedError("Unauthenticated"));
+        next(new UnauthenticatedError("access token not found"));
         return;
     }
 
@@ -28,8 +29,6 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
         const payload: User = verify(token[1], config.jwt.secret!) as User;
 
         req.user = payload;
-
-        req.body.role = payload.permissions[0];
     } catch (error) {
         next(new UnauthenticatedError("Unauthenticated"));
     }
@@ -38,8 +37,8 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
 }
 
 // middleware to authorize user based on permissions
-export function authorize(...permission: string[]) {
-    return (req: Request, res: Response, next: NextFunction) => {
+export function authorize(permission: string) {
+    return async (req: Request, res: Response, next: NextFunction) => {
         const user = req.user!;
 
         if (!user) {
@@ -47,11 +46,15 @@ export function authorize(...permission: string[]) {
             return;
         }
 
-        const hasPermission = permission.every((permission) => user.permissions.includes(permission));
+        const permissions = await PermissionModel.chekPermissions(Number(user.id));
+
+        const userPermissions = permissions.map((p) => p.permission);
+        console.log(userPermissions);
+        const hasPermission = userPermissions.includes(permission);
 
         // check if user has the required permission
         if (!hasPermission) {
-            next(new ForbiddenError("Forbidden"));
+            next(new ForbiddenError("Permissions required!"));
             return;
         }
 
