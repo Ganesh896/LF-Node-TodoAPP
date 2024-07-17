@@ -14,8 +14,8 @@ export async function getTodos(userId: string) {
 }
 
 // get a todo by ID
-export async function getTodoById(id: string) {
-    const todo = await todoModel.TodoModel.getTodoById(id);
+export async function getTodoById(id: string, userId:string) {
+    const todo = await todoModel.TodoModel.getTodoById(id, userId);
     if (!todo) {
         throw new NotFoundError(`Todo with id: ${id} is not found!`);
     }
@@ -30,14 +30,14 @@ export function addTodos(todo: Todo, userId: string) {
 }
 
 // update a todo by ID
-export function updateTodo(id: string, todo: Todo) {
-    todoModel.TodoModel.updateTodo(id, todo);
+export function updateTodo(id: string, userId: string, todo: Todo) {
+    todoModel.TodoModel.updateTodo(id, userId, todo);
     return { message: "Todo update successfully!" };
 }
 
 // delete a todo by ID
-export async function deleteTodo(id: string) {
-    const deletedRows = await todoModel.TodoModel.deleteTodo(id);
+export async function deleteTodo(id: string, userId: string) {
+    const deletedRows = await todoModel.TodoModel.deleteTodo(id, userId);
     if (deletedRows < 1) {
         throw new NotFoundError(`Todo with Id: ${id} not found`);
     }
@@ -45,8 +45,8 @@ export async function deleteTodo(id: string) {
 }
 
 // mark a todo as completed by ID and user ID
-export async function completeTodo(id: string) {
-    const rows = await todoModel.TodoModel.completeTodo(id);
+export async function completeTodo(id: string, userId: string) {
+    const rows = await todoModel.TodoModel.completeTodo(id, userId);
     if (rows < 1) {
         throw new NotFoundError(`Todo with id: ${id} is completed!`);
     }
@@ -54,8 +54,8 @@ export async function completeTodo(id: string) {
 }
 
 // get all completed todos for a user by user ID
-export async function getAllCompletedTodos() {
-    const data = await todoModel.TodoModel.getAllCompletedTodos();
+export async function getAllCompletedTodos(userId: string) {
+    const data = await todoModel.TodoModel.getAllCompletedTodos(userId);
     if (data.length > 0) {
         return data;
     }

@@ -23,35 +23,35 @@ export class TodoModel extends BaseModel {
     }
 
     //get todos by id
-    static async getTodoById(id: string) {
-        const todo = await this.queryBuilder().select("id", "title", "description").table("todos").where({ id }).first();
+    static async getTodoById(id: string, userId: string) {
+        const todo = await this.queryBuilder().select("id", "title", "description").table("todos").where({ user_id: userId, id }).first();
 
         return todo;
     }
 
     //update todo by Id
-    static async updateTodo(id: string, todo: Todo) {
+    static async updateTodo(id: string, userId: string, todo: Todo) {
         const todoToUpdate = {
             title: todo.title,
             description: todo.description,
         };
 
-        await this.queryBuilder().update(todoToUpdate).table("todos").where({ id });
+        await this.queryBuilder().update(todoToUpdate).table("todos").where({ user_id: userId, id });
     }
 
     //delete todo by id
-    static async deleteTodo(id: string) {
-        const query = await this.queryBuilder().table("todos").where({ id }).delete();
+    static async deleteTodo(id: string, userId: string) {
+        const query = await this.queryBuilder().table("todos").where({ user_id: userId, id }).delete();
         return query;
     }
 
     //complete todo
-    static completeTodo(id: string) {
-        return this.queryBuilder().table("todos").where({ id }).update({ is_completed: true });
+    static completeTodo(id: string, userId: string) {
+        return this.queryBuilder().table("todos").where({ user_id: userId, id }).update({ is_completed: true });
     }
 
     // get all completedTodos
-    static getAllCompletedTodos() {
-        return this.queryBuilder().table("todos").where({ is_completed: true });
+    static getAllCompletedTodos(userId: string) {
+        return this.queryBuilder().table("todos").where({ user_id: userId, is_completed: true });
     }
 }

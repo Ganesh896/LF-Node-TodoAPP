@@ -1,8 +1,6 @@
 import { NextFunction, Response } from "express";
 import { Request } from "../interface/auth";
 import * as todoService from "../service/todo";
-import { successResponse } from "../utils/response";
-import { GetQuery } from "../interface/query";
 
 // controller function to add a new todo.
 export function addTodos(req: Request, res: Response) {
@@ -25,7 +23,9 @@ export async function getTodos(req: Request, res: Response) {
 export async function getTodoById(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params;
-        const data = await todoService.getTodoById(id);
+        const user = req.user!;
+
+        const data = await todoService.getTodoById(id, user.id);
 
         res.json(data);
     } catch (error) {
@@ -39,7 +39,9 @@ export async function updateTodo(req: Request, res: Response, next: NextFunction
     try {
         const { id } = req.params; // Getting todo ID from URL parameters
         const { body } = req; // Extracting title and description from request body
-        const message = await todoService.updateTodo(id, body);
+        const user = req.user!;
+
+        const message = await todoService.updateTodo(id, user.id, body);
         res.json(message);
     } catch (error) {
         next(error);
@@ -51,7 +53,8 @@ export async function updateTodo(req: Request, res: Response, next: NextFunction
 export function deleteTodo(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params; // Getting todo ID from URL parameters
-        const message = todoService.deleteTodo(id);
+        const user = req.user!;
+        const message = todoService.deleteTodo(id, user.id);
         res.json(message);
     } catch (error) {
         next(error);
@@ -62,7 +65,8 @@ export function deleteTodo(req: Request, res: Response, next: NextFunction) {
 export function completeTodo(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params; // Getting todo ID from URL parameters
-        const message = todoService.completeTodo(id);
+        const user = req.user!;
+        const message = todoService.completeTodo(id, user.id);
         res.json(message);
     } catch (error) {
         next(error);
@@ -72,7 +76,8 @@ export function completeTodo(req: Request, res: Response, next: NextFunction) {
 // controller function to get all completed todos for a user.
 export function getAllCompletedTodos(req: Request, res: Response, next: NextFunction) {
     try {
-        const data = todoService.getAllCompletedTodos();
+        const user = req.user!;
+        const data = todoService.getAllCompletedTodos(user.id);
         res.json(data);
     } catch (error) {
         next(error);
