@@ -1,3 +1,4 @@
+import { GetQuery } from "../interface/query";
 import { Todo } from "../interface/todo";
 import { BaseModel } from "./base";
 
@@ -14,10 +15,18 @@ export class TodoModel extends BaseModel {
     }
 
     //get todos
-    static async getTodos(user_id: string) {
-        // const { q } = filter;
+    static getTodos(filter: GetQuery, user_id: string) {
+        const { q } = filter;
 
-        const query = await this.queryBuilder().select("id", "title", "description").table("todos").where({ user_id });
+        const query = this.queryBuilder()
+            .select("id", "title", "description")
+            .table("todos")
+            .limit(filter.size!)
+            .offset((filter.page! - 1) * filter.size!);
+
+        if (user_id !== "1") {
+            query.where({ user_id: user_id });
+        }
 
         return query;
     }
@@ -52,6 +61,6 @@ export class TodoModel extends BaseModel {
 
     // get all completedTodos
     static getAllCompletedTodos(userId: string) {
-        return this.queryBuilder().table("todos").where({ user_id: userId, is_completed: true });
+        return this.queryBuilder().select("id", "title", "description").table("todos").where({ user_id: userId, is_completed: true });
     }
 }

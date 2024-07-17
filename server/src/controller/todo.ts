@@ -13,9 +13,9 @@ export function addTodos(req: Request, res: Response) {
 
 // controller function to get all todos for a user.
 export async function getTodos(req: Request, res: Response) {
-    // const { query } = req;
+    const { query } = req;
     const user = req.user!;
-    const data = await todoService.getTodos(user.id);
+    const data = await todoService.getTodos(query, user.id);
     res.json(data);
 }
 
@@ -62,11 +62,11 @@ export function deleteTodo(req: Request, res: Response, next: NextFunction) {
 }
 
 // controller function to mark a todo as completed by its ID.
-export function completeTodo(req: Request, res: Response, next: NextFunction) {
+export async function completeTodo(req: Request, res: Response, next: NextFunction) {
     try {
         const { id } = req.params; // Getting todo ID from URL parameters
         const user = req.user!;
-        const message = todoService.completeTodo(id, user.id);
+        const message = await todoService.completeTodo(id, user.id);
         res.json(message);
     } catch (error) {
         next(error);
@@ -74,10 +74,10 @@ export function completeTodo(req: Request, res: Response, next: NextFunction) {
 }
 
 // controller function to get all completed todos for a user.
-export function getAllCompletedTodos(req: Request, res: Response, next: NextFunction) {
+export async function getAllCompletedTodos(req: Request, res: Response, next: NextFunction) {
     try {
         const user = req.user!;
-        const data = todoService.getAllCompletedTodos(user.id);
+        const data = await todoService.getAllCompletedTodos(user.id);
         res.json(data);
     } catch (error) {
         next(error);

@@ -9,14 +9,18 @@ import { GetQuery } from "../interface/query";
 
 // create a new user and hash the password
 export async function createUser(user: User) {
-    const password = await bcrypt.hash(user.password, 10);
+    try {
+        const password = await bcrypt.hash(user.password, 10);
 
-    userModel.UserModel.addUser({
-        ...user,
-        password: password,
-    });
+        await userModel.UserModel.addUser({
+            ...user,
+            password: password,
+        });
 
-    return { message: "User created successfully!" };
+        return { message: "User created successfully!" };
+    } catch (error) {
+        throw error;
+    }
 }
 
 // login function

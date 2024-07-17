@@ -5,8 +5,8 @@ import { User } from "../interface/user";
 import * as todoModel from "../model/todos";
 
 // get all todos for a user
-export async function getTodos(userId: string) {
-    const data = await todoModel.TodoModel.getTodos(userId);
+export async function getTodos(query: GetQuery, userId: string) {
+    const data = await todoModel.TodoModel.getTodos(query, userId);
     if (data.length > 0) {
         return data;
     }
@@ -14,7 +14,7 @@ export async function getTodos(userId: string) {
 }
 
 // get a todo by ID
-export async function getTodoById(id: string, userId:string) {
+export async function getTodoById(id: string, userId: string) {
     const todo = await todoModel.TodoModel.getTodoById(id, userId);
     if (!todo) {
         throw new NotFoundError(`Todo with id: ${id} is not found!`);
@@ -56,6 +56,7 @@ export async function completeTodo(id: string, userId: string) {
 // get all completed todos for a user by user ID
 export async function getAllCompletedTodos(userId: string) {
     const data = await todoModel.TodoModel.getAllCompletedTodos(userId);
+    console.log(data);
     if (data.length > 0) {
         return data;
     }

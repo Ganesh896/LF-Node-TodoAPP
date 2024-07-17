@@ -1,9 +1,9 @@
 import express from "express";
 import { createUser, deleteUserById, getUsers, getUserById, login, refreshToken, updateUserById } from "../controller/user";
 import { authenticate, authorize } from "../middleware/auth";
-import { validateReqBody, validateReqParams } from "../middleware/validator";
+import { validateReqBody, validateReqParams, validateReqQuery } from "../middleware/validator";
 import { userBodySchema, loginUserBodySchema } from "../schema/user";
-import { paramsSchema } from "../schema/common";
+import { paramsSchema, querySchema } from "../schema/common";
 
 const router = express();
 
@@ -16,7 +16,7 @@ router.post("/refresh-token", refreshToken);
 router.post("/", validateReqBody(userBodySchema), authenticate, authorize("users.create"), createUser);
 
 //get all users
-router.get("/", authenticate, authorize("users.get"), getUsers);
+router.get("/", validateReqQuery(querySchema), authenticate, authorize("users.get"), getUsers);
 
 //get userById
 router.get("/:id", validateReqParams(paramsSchema), authenticate, authorize("users.get"), getUserById);

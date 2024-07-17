@@ -2,13 +2,13 @@ import express from "express";
 import { addTodos, deleteTodo, getTodos, getTodoById, updateTodo } from "../controller/todo";
 import { authenticate, authorize } from "../middleware/auth";
 import { addTodoBodySchema, updateTodoBodySchema } from "../schema/todo";
-import { validateReqBody, validateReqParams } from "../middleware/validator";
-import { paramsSchema } from "../schema/common";
+import { validateReqBody, validateReqParams, validateReqQuery } from "../middleware/validator";
+import { paramsSchema, querySchema } from "../schema/common";
 
 const router = express();
 
 //url = http://localhost:3000/api/todos method = GET
-router.get("/", authenticate, authorize("todos.get"), getTodos);
+router.get("/", validateReqQuery(querySchema), authenticate, authorize("todos.get"), getTodos);
 
 //url = http://localhost:3000/api/todos/1 method = GET
 router.get("/:id", authenticate, validateReqParams(paramsSchema), authorize("todos.get"), getTodoById);

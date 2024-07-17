@@ -8,6 +8,6 @@ const router = express();
 
 router.use("/users", userRouter);
 router.use("/todos", todoRouter);
-router.use("/completedTodos", completedRouter);
+router.use("/completed", completedRouter);
 
 export default router;

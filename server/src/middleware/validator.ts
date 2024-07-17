@@ -17,6 +17,21 @@ export function validateReqParams(schema: Schema) {
     };
 }
 
+// middleware to validate request query
+export function validateReqQuery(schema: Schema) {
+    return (req: Request, res: Response, next: NextFunction) => {
+        const { error, value } = schema.validate(req.query);
+
+        if (error) {
+            next(new BadRequestError(error.message));
+        }
+
+        req.query = value;
+
+        next();
+    };
+}
+
 // middleware to validate request body
 export function validateReqBody(schema: Schema) {
     return (req: Request, res: Response, next: NextFunction) => {

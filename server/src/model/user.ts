@@ -1,3 +1,4 @@
+import { ConflictError } from "../error/error";
 import { GetQuery } from "../interface/query";
 import { User } from "../interface/user";
 import { BaseModel } from "./base";
@@ -6,36 +7,50 @@ import { BaseModel } from "./base";
 export class UserModel extends BaseModel {
     // create new user
     static async addUser(user: User) {
-        const { name, email, password } = user;
-        const userToCreate = {
-            name,
-            email,
-            password,
-        };
+        try {
+            const { name, email, password } = user;
+            const userToCreate = {
+                name,
+                email,
+                password,
+            };
 
-        await this.queryBuilder().insert(userToCreate).table("users");
+            await this.queryBuilder().insert(userToCreate).table("users");
 
-        const getUser = await this.queryBuilder().select("id").table("users").where({ email }).first();
+            const getUser = await this.queryBuilder().select("id").table("users").where({ email }).first();
 
-        await this.queryBuilder().insert({ user_id: getUser.id, role_id: 2 }).table("userRoles");
+            await this.queryBuilder().insert({ user_id: getUser.id, role_id: 2 }).table("userRoles");
+        } catch (error) {
+            throw new ConflictError("User with this email is already Exists");
+        }
     }
 
     //update User by Id
-    static async updateUser(id: string, user: User) {
+    static updateUser(id: string, user: User) {
         const userToUpdate = {
             name: user.name,
             email: user.email,
             password: user.password,
         };
 
-        await this.queryBuilder().update(userToUpdate).table("users").where({ id });
+        return this.queryBuilder().update(userToUpdate).table("users").where({ id });
     }
 
     //get users
-    static async getUsers(filter: GetQuery) {
+    static getUsers(filter: GetQuery) {
         const { q } = filter;
 
-        const query = this.queryBuilder().select("id", "name", "email").table("users");
+        // const query = this.queryBuilder().select("id", "name", "email").table("users");
+        const query = this.queryBuilder()
+            .select("id", "name", "email")
+            .table("users")
+            .limit(filter.size!)
+            .offset((filter.page! - 1) * filter.size!);
+
+        if (q) {
+            // query.where({ name: q });
+            query.whereLike("name", `%${q}%`);
+        }
 
         return query;
     }
@@ -46,15 +61,12 @@ export class UserModel extends BaseModel {
     }
 
     //get user by id
-    static async getUserById(id: string) {
-        const user = await this.queryBuilder().select("id", "name", "email", "password").table("users").where({ id }).first();
-
-        return user;
+    static getUserById(id: string) {
+        return this.queryBuilder().select("id", "name", "email", "password").table("users").where({ id }).first();
     }
 
     //delete user by id
-    static async deleteUserById(id: string) {
-        const query = await this.queryBuilder().table("users").where({ id }).delete();
-        return query;
+    static deleteUserById(id: string) {
+        return this.queryBuilder().table("users").where({ id }).delete();
     }
 }

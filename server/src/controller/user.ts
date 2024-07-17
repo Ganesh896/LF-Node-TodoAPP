@@ -4,10 +4,14 @@ import { successResponse } from "../utils/response";
 import { GetQuery } from "../interface/query";
 
 // controller function to create a new user.
-export async function createUser(req: Request, res: Response) {
-    const { body } = req;
-    const message = await userService.createUser(body);
-    res.json(message);
+export async function createUser(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { body } = req;
+        const message = await userService.createUser(body);
+        res.json(message);
+    } catch (error) {
+        next(error);
+    }
 }
 
 // controller function to handle user login.
